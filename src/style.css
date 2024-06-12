@@ -1,0 +1,66 @@
+html,
+body {
+  height: 99%;
+  margin: 2px;
+}
+
+input {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+div {
+  padding: 5px;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.box .title {
+  font-size: larger;
+  text-align: center;
+}
+
+.box .sendreceive {
+  display: flex;
+  flex-direction: row;
+}
+
+.sendreceive .send {
+  flex-grow: 1
+}
+
+.sendreceive .receive {
+  flex-grow: 1
+}
+
+.box .console {
+  flex-grow: 99;
+  overflow: auto;
+  border: 2px solid black;
+}
+
+button {
+  border: 1px solid #0066cc;
+  background-color: #0099cc;
+  color: #ffffff;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+button:hover {
+  border: 1px solid #0099cc;
+  background-color: #00aacc;
+  color: #ffffff;
+}
+
+button:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
+

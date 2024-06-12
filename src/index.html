@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8">
+    <title>Micro:bit WebUSB Radio Commands</title>
+</head>
+
+<body>
+    <div class="box">
+        <div class="title">
+            Micro:bit WebUSB Radio Commands
+        </div>
+        <div class="connectdisconnect">
+            <button id="connect" style="display: block;">Connect</button>
+            <button id="disconnect" style="display: none;">Disconnect</button>
+        </div>
+        <div class="sendreceive">
+            <div class="send">
+                <div>
+                    <label for="inRSGRange"><button id="sendRSG" disabled>Radio Set Group</button></label><input type="range" id="inRSGRange" min="0" max="255" value="0" disabled /><input type="number" id="inRSGNumber" min="0" max="255" value="0" disabled />
+                </div>
+                <div>
+                    <label for="inRSN"><button id="sendRSN" disabled>Radio Send Number</button></label><input type="number" id="inRSN" disabled />
+                </div>
+                <div>
+                    <label for="inRSVString"><button id="sendRSV" disabled>Radio Send Value</button></label><input type="text" id="inRSVString" maxlength="8" disabled /> = <input type="number" id="inRSVNumber" disabled />
+                </div>
+                <div>
+                    <label for="inRSS"><button id="sendRSS" disabled>Radio Send String</button></label><input type="text" id="inRSS" disabled />
+                </div>
+                <div>
+                    <label for="inRSTPRange"><button id="sendRSTP" disabled>Radio Set Transmit Power</button></label><input type="range" id="inRSTPRange" min="0" max="7" value="6" disabled /><input type="number" id="inRSTPNumber" min="0" max="7" value="6" disabled />
+                </div>
+                <div>
+                    <label for="inRSTSN"><button id="sendRSTSN" disabled>Radio Set Transmit Serial Number</button></label><select id="inRSTSN" disabled><option value="TRUE">True</option><option value="FALSE">False</option></select>
+                </div>
+                <div>
+                    <label for="inRSFBRange"><button id="sendRSFB" disabled>Radio Set Frequency Band</button></label><input type="range" id="inRSFBRange" min="0" max="83" value="7" disabled /><input type="number" id="inRSFBNumber" min="0" max="83" value="7" disabled />
+                </div>
+            </div>
+            <div class="receive">
+                <div>
+                    On Radio Received Number: <span id="receivedORRN"></span>
+                </div>
+                <div>
+                    On Radio Received Value: <span id="receivedORRVString"></span> = <span id="receivedORRVNumber"></span>
+                </div>
+                <div>
+                    On Radio Received String: <span id="receivedORRS"></span>
+                </div>
+                <div>
+                    Serial Number: <span id="receivedSN"></span>
+                </div>
+                <div>
+                    Signal Strength: <span id="receivedSS"></span>
+                </div>
+                <div>
+                    Time: <span id="receivedT"></span>
+                </div>
+            </div>
+        </div>
+        <div class="lastHeartbeat">Last Heartbeat: <span id="lastHeartbeat"></span></div>
+        <div class="console" id="console">
+    </div>                            
+</body>
+
+<!--  Include the DAP support library and WebUSB support -->
+<script src="ubitwebusb.js"></script>
+
+<script>
+
+    const delimiter = String.fromCharCode(30);
+
+    const connect = document.getElementById("connect");
+    const disconnect = document.getElementById("disconnect");
+
+    const sendRSG = document.getElementById("sendRSG");
+    const inRSGRange = document.getElementById("inRSGRange");
+    const inRSGNumber = document.getElementById("inRSGNumber");
+
+    const sendRSN = document.getElementById("sendRSN");
+    const inRSN = document.getElementById("inRSN");
+
+    const sendRSV = document.getElementById("sendRSV");
+    const inRSVString = document.getElementById("inRSVString");
+    const inRSVNumber = document.getElementById("inRSVNumber");
+
+    const sendRSS = document.getElementById("sendRSS");
+    const inRSS = document.getElementById("inRSS");
+
+    const sendRSTP = document.getElementById("sendRSTP");
+    const inRSTPRange = document.getElementById("inRSTPRange");
+    const inRSTPNumber = document.getElementById("inRSTPNumber");
+
+    const sendRSTSN = document.getElementById("sendRSTSN");
+    const inRSTSN = document.getElementById("inRSTSN");
+
+    const sendRSFB = document.getElementById("sendRSFB");
+    const inRSFBRange = document.getElementById("inRSFBRange");
+    const inRSFBNumber = document.getElementById("inRSFBNumber");
+
+    const receivedORRN = document.getElementById("receivedORRN");
+
+    const receivedORRVString = document.getElementById("receivedORRVString");
+    const receivedORRVNumber = document.getElementById("receivedORRVNumber");
+
+    const receivedORRS = document.getElementById("receivedORRS");
+
+    const receivedSN = document.getElementById("receivedSN");
+    const receivedSS = document.getElementById("receivedSS");
+    const receivedT = document.getElementById("receivedT");
+
+    const lastHeartbeat = document.getElementById("lastHeartbeat");
+
+    function disableAllInput() {
+        sendRSG.setAttribute("disabled", "");
+        inRSGRange.setAttribute("disabled", "");
+        inRSGNumber.setAttribute("disabled", "");
+
+        sendRSN.setAttribute("disabled", "");
+        inRSN.setAttribute("disabled", "");
+
+        sendRSV.setAttribute("disabled", "");
+        inRSVString.setAttribute("disabled", "");
+        inRSVNumber.setAttribute("disabled", "");
+
+        sendRSS.setAttribute("disabled", "");
+        inRSS.setAttribute("disabled", "");
+
+        sendRSTP.setAttribute("disabled", "");
+        inRSTPRange.setAttribute("disabled", "");
+        inRSTPNumber.setAttribute("disabled", "");
+
+        sendRSTSN.setAttribute("disabled", "");
+        inRSTSN.setAttribute("disabled", "");
+
+        sendRSFB.setAttribute("disabled", "");
+        inRSFBRange.setAttribute("disabled", "");
+        inRSFBNumber.setAttribute("disabled", "");
+    }
+
+    function enableAllInput() {
+        sendRSG.removeAttribute("disabled");
+        inRSGRange.removeAttribute("disabled");
+        inRSGNumber.removeAttribute("disabled");
+
+        sendRSN.removeAttribute("disabled");
+        inRSN.removeAttribute("disabled");
+
+        sendRSV.removeAttribute("disabled");
+        inRSVString.removeAttribute("disabled");
+        inRSVNumber.removeAttribute("disabled");
+
+        sendRSS.removeAttribute("disabled");
+        inRSS.removeAttribute("disabled");
+
+        sendRSTP.removeAttribute("disabled");
+        inRSTPRange.removeAttribute("disabled");
+        inRSTPNumber.removeAttribute("disabled");
+
+        sendRSTSN.removeAttribute("disabled");
+        inRSTSN.removeAttribute("disabled");
+
+        sendRSFB.removeAttribute("disabled");
+        inRSFBRange.removeAttribute("disabled");
+        inRSFBNumber.removeAttribute("disabled");
+    }
+
+    // Append a line to the console frame
+    function consolePrintln(message) {
+        var con = document.getElementById("console");
+        con.appendChild(document.createTextNode(new Date().toLocaleString() + " " + message));
+        con.appendChild(document.createElement("br"));
+        con.scrollTop = con.scrollHeight;
+    }
+
+    function consolePrintlnBold(message) {
+        var con = document.getElementById("console");
+        let boldItem = document.createElement("b");
+        boldItem.innerHTML = new Date().toLocaleString() + " " + message;
+        con.appendChild(boldItem);
+        con.appendChild(document.createElement("br"));
+        con.scrollTop = con.scrollHeight;
+    }
+
+    // List of connected devices (a single value could be used if only connecting to one device)
+    var connectedDevices = [];
+
+    // Example event call-back handler
+    function uBitEventHandler(reason, device, data) {
+        switch(reason) {
+            case "connected":
+                consolePrintlnBold("Connected!");
+                connectedDevices.push(device);
+                setTimeout(() => {
+                    connectedDevices.forEach( d=>uBitSend(d, "RG?"))
+                }, 250);
+                connect.style.display = "none";
+                disconnect.style.display = "block";
+                break;
+            case "disconnected":
+                consolePrintlnBold("Disconnected");
+                connectedDevices = connectedDevices.filter( v => v != device);
+                disconnect.style.display = "none";
+                connect.style.display = "block";
+                disableAllInput();
+                break;
+            case "connection failure":
+                consolePrintlnBold("Connection Failure");
+                break;
+            case "error":
+                consolePrintlnBold("Error");
+                break;
+            case "empty":
+                consolePrintln("Empty");
+                break;
+            case "command":
+                switch(data.data[0]) {
+                    case "YES":
+                        consolePrintlnBold("Radio Gateway Responded");
+                        enableAllInput();
+                        break;
+                    case "HB":
+                        lastHeartbeat.innerText = new Date().toLocaleString();
+                        break;
+                    case "ORRN":
+                        receivedORRN.innerText = data.data[1];
+                        receivedSN.innerText = data.data[2];
+                        receivedSS.innerText = data.data[3];
+                        receivedT.innerText = data.data[4];
+                        consolePrintln("Number Received");
+                        break;
+                    case "ORRV":
+                        receivedORRVString.innerText = data.data[1];
+                        receivedORRVNumber.innerText = data.data[2];
+                        receivedSN.innerText = data.data[3];
+                        receivedSS.innerText = data.data[4];
+                        receivedT.innerText = data.data[5];
+                        consolePrintln("Value Received");
+                        break;
+                    case "ORRS":
+                        receivedORRS.innerText = data.data[1];
+                        receivedSN.innerText = data.data[2];
+                        receivedSS.innerText = data.data[3];
+                        receivedT.innerText = data.data[4];
+                        consolePrintln("String Received");
+                        break;
+                }
+                break;
+        }
+    }
+
+    consolePrintlnBold("Waiting for connection");
+
+    connect.addEventListener("click", (event) => {
+        uBitConnectDevice(uBitEventHandler);
+    });
+    disconnect.addEventListener("click", (event) =>  {
+        connectedDevices.forEach(d=>uBitDisconnect(d)); connectedDevices = [];
+    });
+    inRSGRange.addEventListener("change", (event) => {
+        inRSGNumber.value = event.target.value;
+    });
+    inRSGNumber.addEventListener("change", (event) => {
+        inRSGRange.value = event.target.value;
+    });
+    inRSTPRange.addEventListener("change", (event) => {
+        inRSTPNumber.value = event.target.value;
+    });
+    inRSTPNumber.addEventListener("change", (event) => {
+        inRSTPRange.value = event.target.value;
+    });
+    inRSFBRange.addEventListener("change", (event) => {
+        inRSFBNumber.value = event.target.value;
+    });
+    inRSFBNumber.addEventListener("change", (event) => {
+        inRSFBRange.value = event.target.value;
+    });
+    sendRSG.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSG" + String.fromCharCode(30) + inRSGRange.value))    
+        consolePrintln("Set Group Sent");
+    });
+    sendRSN.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSN" + String.fromCharCode(30) + inRSN.value));
+        consolePrintln("Number Sent");
+    });
+    sendRSV.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSV" + String.fromCharCode(30) + inRSVString.value + String.fromCharCode(30) + inRSVNumber.value));
+        consolePrintln("Value Sent");
+    });
+    sendRSS.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSS" + String.fromCharCode(30) + inRSS.value));
+        consolePrintln("String Sent");
+    });
+    sendRSTP.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSTP" + String.fromCharCode(30) + inRSTPRange.value));
+        consolePrintln("Set Transmit Power Sent");
+    });
+    sendRSTSN.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSTSN" + String.fromCharCode(30) + inRSTSN.value));
+        consolePrintln("Transmit Serial Number Sent");
+    });
+    sendRSFB.addEventListener("click", (event) => {
+        connectedDevices.forEach( d=>uBitSend(d, "RSFB" + String.fromCharCode(30) + inRSFBRange.value));
+        consolePrintln("Frequency Band Sent");
+    });
+
+</script>
+
+</html>
