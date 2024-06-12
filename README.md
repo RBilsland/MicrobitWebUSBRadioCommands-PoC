@@ -41,4 +41,4 @@ Load the hex files onto a couple of Micro:bit's and connect the one containing t
 
 **Once connected remember to set the radio group to match the same the demo device is on, which is group 123**. Forget to do this and the browser will be transmitting it's commands with no-one listening. After this enjoy sending strings, number and values to the demo Micro:bit and receiving the same back. You'll notice Serial Number, Signal Strength and Time are displayed every time a message is received. This information has always been available but isn't usually accessed. The Serial Number will only contain 0 as the demo Micro:bit isn't set to transmit it's serial number with every message sent.
 
-###Robert Bilsland - 12/06/2024
+**Robert Bilsland - 12/06/2024**
