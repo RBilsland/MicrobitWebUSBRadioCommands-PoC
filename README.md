@@ -15,11 +15,21 @@ Finally I threw together a quick block based demo that would be my end Micro:bit
 
 This project can be split into three parts, the browser interface, a Micro:bit being used as a "Radio Gateway" and another Micro:bit to be a device to send / receive messages.
 
-!(https://upload.wikimedia.org/wikipedia/commons/6/67/USB_icon.svg)
+![](images/MicrobitWebUSB.png?raw=true)
 
 
 
-## The Browser Inteface
+### The Browser Inteface
 The first thing to point out is that this relies on the WebUSB API which, at the time of writing, isn't supported in all browsers. On the desktop that currenly means Chrome & Edge yes, Safari & Firefox no. You can find the current status of browser support on [Can I Use, WebUSB](https://caniuse.com/webusb).
 
-A security feature of the WebUSB API is that the page is served over a secure connection (https) or from localhost, you cannot just open the index.html page from your local drive. The easiest way to try it the project out is to open it from GitHub by following this link []().
+A security feature of the WebUSB API is that the page is served over a secure connection (https) or from localhost, you cannot just open the index.html page from your local drive. The easiest way to try it the project out is to open it from GitHub by following this link [Micro:bit WebUSB Radio Commands](https://rbilsland.github.io/MicrobitWebUSBRadioCommands-PoC/src/).
+
+The page is broken down into five areas. At the top there is the Connect / Disconnect button. Below that, on the left are the radio commands while on the right are the radio events. The radio command button's will stay greyed out until connection is made. Below these is the last received Hearbeat date / time. When working this gets updated every 5 seconds upon receiving a ping from the gateway. Finally at the bottom is the console window showing you a log of what's happening.
+
+### The Radio Gateway
+This handles converting the serially send commands from the browser into radio commands and receiving radio events and sending them back serially to the browser. It also provides an initial handshake with the browser to make sure the gateway code is loaded and also a heartbeat ping every 5 seconds to prove it's still alive.
+
+These are it's only tasks and just act's as a radio interface to the Micro:bit world for the browser. You can download the gateway hex file from the following link [microbit-RadioGateway.hex](hex/microbit-RadioGateway.hex?raw=True) and if you want to have a look at the code here's an image [microbit-RadioGateway.png](images/microbit-RadioGateway.png?raw=True)
+
+### The Demo Device 
+This is just to provide an end point that the browser can interact with
