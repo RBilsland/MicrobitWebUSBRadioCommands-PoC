@@ -29,7 +29,14 @@ The page is broken down into five areas. At the top there is the Connect / Disco
 ### The Radio Gateway
 This handles converting the serially send commands from the browser into radio commands and receiving radio events and sending them back serially to the browser. It also provides an initial handshake with the browser to make sure the gateway code is loaded and also a heartbeat ping every 5 seconds to prove it's still alive.
 
-These are it's only tasks and just act's as a radio interface to the Micro:bit world for the browser. You can download the gateway hex file from the following link [microbit-RadioGateway.hex](hex/microbit-RadioGateway.hex?raw=True) and if you want to have a look at the code here's an image [microbit-RadioGateway.png](images/microbit-RadioGateway.png?raw=True)
+These are it's only tasks and just act's as a radio interface to the Micro:bit world for the browser. You can download the gateway hex file by right clicking and saving the following link [microbit-RadioGateway.hex](hex/microbit-RadioGateway.hex?raw=True) and if you want to have a look at the code here's an image [microbit-RadioGateway.png](images/microbit-RadioGateway.png?raw=True)
 
 ### The Demo Device 
-This is just to provide an end point that the browser can interact with
+This is just to provide an end point that the browser can interact with. It is able to receive strings, numbers or values (a string / number pair) and display them on the Micro:bit's screen. It's also able to send the string "Hello World" by pressing button A, the number 1234567890 by pressing button B and the value "ABC" = 123 by pressing the logo.
+
+You can download the demo hex file by right clicking and saving the following link [microbit-RadioDemo.hex](hex/microbit-RadioDemo.hex?raw=True) and if you want to have a look at the code here's an image [microbit-RadioDemo.png](images/microbit-RadioDemo.png?raw=True)
+
+## Running the Proof of Concept
+Load the hex files onto a couple of Micro:bit's and connect the one containing the gateway code to the computer via a USB cable. Then visit the [Micro:bit WebUSB Radio Commands](https://rbilsland.github.io/MicrobitWebUSBRadioCommands-PoC/src/) page and click "Connect". You must make sure the Micro:bit connected to the computer hasn't already been paired with MadeCode, for example. If it has click the three dots to the right of the download button in MakeCode and choose to disconnect. If all else fails just un-plug the Micro:bit and plug it in again!
+
+Once connected remember to set the radio group to match that the demo device is on, this is group 123. Forget to do this and the browser will be transmitting it's commands with no-one listening. After this enjoy sending strings, number and values to the demo Micro:bit and receiving the same back. You'll notice Serial Number, Signal Strength and Time are displayed everytime a message is received. This information has always been available but isn't usually accessed. The Serial Number will only contain 0 as the demo Micro:bit isn't set to transmit it's serial number with every message sent.
